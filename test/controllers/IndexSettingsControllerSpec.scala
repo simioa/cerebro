@@ -5,6 +5,7 @@ import models.{ElasticServer, Host}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
@@ -35,7 +36,7 @@ object IndexSettingsControllerSpec extends MockedServices {
         |}
       """.stripMargin
     )
-    client.getIndexSettingsFlat("foo", ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.getIndexSettingsFlat("foo", ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/index_settings").withBody(Json.obj("host" -> "somehost", "index" -> "foo"))).get
     ensure(response, 200, expectedResponse)
   }
@@ -57,7 +58,7 @@ object IndexSettingsControllerSpec extends MockedServices {
         |  "acknowledged":true
         |}
       """.stripMargin)
-    client.updateIndexSettings("foo", body, ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.updateIndexSettings("foo", body, ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/index_settings/update").withBody(Json.obj("host" -> "somehost", "index" -> "foo", "settings" -> body))).get
     ensure(response, 200, expectedResponse)
   }

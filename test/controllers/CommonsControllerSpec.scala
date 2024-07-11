@@ -5,6 +5,7 @@ import models.{ElasticServer, Host}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
@@ -36,7 +37,7 @@ class CommonsControllerSpec extends MockedServices {
         |]
       """.stripMargin
     )
-    client.getIndices(ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.getIndices(ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/commons/indices").withBody(Json.obj("host" -> "somehost"))).get
     ensure(response, 200, Json.arr("index1", "index2"))
   }
@@ -52,7 +53,7 @@ class CommonsControllerSpec extends MockedServices {
       """.stripMargin
     )
     val body = Json.obj("host" -> "somehost", "index" -> "someIndex")
-    client.getIndexMapping("someIndex", ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.getIndexMapping("someIndex", ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/commons/get_index_mapping").withBody(body)).get
     ensure(response, 200, expectedResponse)
   }
@@ -84,7 +85,7 @@ class CommonsControllerSpec extends MockedServices {
       """.stripMargin
     )
     val body = Json.obj("host" -> "somehost", "index" -> "someIndex")
-    client.getIndexSettings("someIndex", ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.getIndexSettings("someIndex", ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/commons/get_index_settings").withBody(body)).get
     ensure(response, 200, expectedResponse)
   }
@@ -524,7 +525,7 @@ class CommonsControllerSpec extends MockedServices {
       """.stripMargin
     )
     val body = Json.obj("host" -> "somehost", "node" -> "someNode")
-    client.nodeStats("someNode", ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.nodeStats("someNode", ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/commons/get_node_stats").withBody(body)).get
     ensure(response, 200, expectedResponse)
   }

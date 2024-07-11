@@ -5,6 +5,7 @@ import models.{ElasticServer, Host}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
@@ -32,7 +33,7 @@ object RestControllerSpec extends MockedServices {
       """.stripMargin
     )
     val body = Json.obj("host" -> "somehost", "method" -> "GET", "path" -> "/someesapi")
-    client.executeRequest("GET", "/someesapi", None, ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.executeRequest("GET", "/someesapi", None, ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/rest/request").withBody(body)).get
     ensure(response, 200, expectedResponse)
   }

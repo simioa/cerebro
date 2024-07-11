@@ -8,6 +8,10 @@ import slick.lifted.Tag
 
 case class HashedRestRequest(path: String, method: String, body: String, username: String, createdAt: Long, md5: String)
 
+object HashedRestRequest {
+  def tupled: ((String, String, String, String, Long, String)) => HashedRestRequest = (HashedRestRequest.apply _).tupled
+}
+
 case class RestRequest(path: String, method: String, body: String, username: String, createdAt: Date) {
 
   val md5 = MessageDigest.getInstance("MD5").digest(

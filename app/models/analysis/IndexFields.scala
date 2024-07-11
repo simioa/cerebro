@@ -22,7 +22,7 @@ object IndexFields {
       }.toSeq
     }
 
-    JsArray(fields.map(JsString))
+    JsArray(fields.map(JsString.apply))
   }
 
   def extractProperties(data: JsValue): Seq[String] = {

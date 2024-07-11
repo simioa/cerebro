@@ -2,11 +2,13 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import controllers.auth.{AuthAction, AuthenticationModule}
 import forms.LoginForm
 import play.api.Configuration
 import play.api.mvc.InjectedController
+import play.api.mvc.AnyContent
+import play.api.mvc.Request
 
 
 @Singleton
@@ -20,7 +22,7 @@ class AuthController @Inject()(system: ActorSystem,
   private val badFormMsg = "invalid login form data"
 
 
-  def index = Action { implicit request =>
+  def index = Action { implicit request: Request[AnyContent] =>
     if (authentication.isEnabled) {
       request.session.get(AuthAction.SESSION_USER).map { user =>
         request.session.get(AuthAction.REDIRECT_URL) match {
@@ -37,7 +39,7 @@ class AuthController @Inject()(system: ActorSystem,
     }
   }
 
-  def login = Action { implicit request =>
+  def login = Action { implicit request: Request[AnyContent] =>
     LoginForm.form.bindFromRequest().fold(
       formWithErrors => {
         log.error(badFormMsg)
@@ -53,13 +55,13 @@ class AuthController @Inject()(system: ActorSystem,
               }
             resp.withSession(AuthAction.SESSION_USER -> username)
           case None =>
-            Redirect(routes.AuthController.index()).flashing(LOGIN_MSG -> "Incorrect username or password")
+            Redirect(routes.AuthController.index).flashing(LOGIN_MSG -> "Incorrect username or password")
         }
       }
     )
   }
 
-  def logout = Action { _ =>
+  def logout = Action {
     val prefix = configuration.getOptional[String]("play.http.context").getOrElse("/")
     Redirect(s"${prefix}login").withNewSession
   }

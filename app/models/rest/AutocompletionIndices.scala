@@ -8,7 +8,7 @@ object AutocompletionIndices {
     JsArray(
       aliases.as[JsObject].value.flatMap {
         case (idx, data) => (data \ "aliases").as[JsObject].keys ++ Set(idx)
-      }.toSeq.distinct.map(JsString)
+      }.toSeq.distinct.map(JsString.apply)
     )
 
 }

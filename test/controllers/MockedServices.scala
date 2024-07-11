@@ -3,7 +3,7 @@ package controllers
 import controllers.auth.AuthenticationModule
 import elastic.ElasticClient
 import org.specs2.Specification
-import org.specs2.mock.Mockito
+import org.mockito.Mockito._
 import org.specs2.specification.BeforeEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -13,12 +13,12 @@ import play.api.test.Helpers.{contentAsJson, _}
 
 import scala.concurrent.Future
 
-trait MockedServices extends Specification with BeforeEach with Mockito {
+trait MockedServices extends Specification with BeforeEach {
 
-  val client = mock[ElasticClient]
+  val client = mock(classOf[ElasticClient])
 
-  val auth = mock[AuthenticationModule]
-  auth.isEnabled returns false
+  val auth = mock(classOf[AuthenticationModule])
+  when(auth.isEnabled).thenReturn(false)
 
   override def before = {
     org.mockito.Mockito.reset(client)

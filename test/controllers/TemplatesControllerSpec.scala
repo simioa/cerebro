@@ -5,6 +5,7 @@ import models.{ElasticServer, Host}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
@@ -68,7 +69,7 @@ object TemplatesControllerSpec extends MockedServices {
         |]
       """.stripMargin
     )
-    client.getTemplates(ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, mockedResponse))
+    when(client.getTemplates(ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, mockedResponse)))
     val response = route(application, FakeRequest(POST, "/templates").withBody(Json.obj("host" -> "somehost"))).get
     ensure(response, 200, expectedResponse)
   }
@@ -79,7 +80,7 @@ object TemplatesControllerSpec extends MockedServices {
         |{"acknowledged":true}
       """.stripMargin
     )
-    client.deleteTemplate("someTemplate", ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.deleteTemplate("someTemplate", ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/templates/delete").withBody(Json.obj("host" -> "somehost", "name" -> "someTemplate"))).get
     ensure(response, 200, expectedResponse)
   }
@@ -102,7 +103,7 @@ object TemplatesControllerSpec extends MockedServices {
       """.stripMargin
     )
     val body = Json.obj("host" -> "somehost", "name" -> "someTemplate", "template" -> template)
-    client.createTemplate("someTemplate", template, ElasticServer(Host("somehost", None))) returns Future.successful(Success(200, expectedResponse))
+    when(client.createTemplate("someTemplate", template, ElasticServer(Host("somehost", None)))).thenReturn(Future.successful(Success(200, expectedResponse)))
     val response = route(application, FakeRequest(POST, "/templates/create").withBody(body)).get
     ensure(response, 200, expectedResponse)
   }

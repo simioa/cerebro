@@ -4,10 +4,11 @@ import java.net.URLEncoder
 import javax.inject.Singleton
 
 import com.google.inject.Inject
-import elastic.HTTPElasticClient._
+import elastic.HTTPElasticClient.{JsonContentType, NdJsonContentType}
 import models.ElasticServer
 import play.api.libs.json._
 import play.api.libs.ws.{WSAuthScheme, WSClient}
+import play.api.libs.ws.DefaultBodyWritables.writeableOf_String
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
